@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.imms.web.dao.ImmsMsgMapper">
+  <resultMap id="BaseResultMap" type="com.example.imms.web.model.ImmsMsg">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="action_user_name" jdbcType="VARCHAR" property="actionUserName" />
+    <result column="module_code" jdbcType="VARCHAR" property="moduleCode" />
+    <result column="module_name" jdbcType="VARCHAR" property="moduleName" />
+    <result column="url"  jdbcType="VARCHAR" property="url" />
+    <result column="actions" jdbcType="VARCHAR" property="actions" />
+    <result column="sid" jdbcType="INTEGER" property="sid" />
+    <result column="sname" jdbcType="VARCHAR" property="sname" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="oncreate" jdbcType="DATE" property="oncreate" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+  </resultMap>
+
+  <select id="queryById" parameterType="int" resultMap="BaseResultMap">
+    SELECT * FROM imms_msg WHERE id = #{id}
+  </select>
+
+  <sql id="baseColumn">
+    id            ,
+    action_user_name     ,
+    module_code    ,
+    module_name     ,
+    url           ,
+    actions        ,
+    sid           ,
+    sname,
+    title         ,
+    oncreate,
+    version
+  </sql>
+
+
+  <select id="getMsgListInit" resultType="com.example.imms.web.model.ImmsMsg">
+    SELECT
+    id            ,
+    action_user_name  as actionUserName   ,
+    module_code   as moduleCode ,
+    module_name   as moduleName  ,
+    url           ,
+    actions        ,
+    sid           ,
+    sname,
+    title         ,
+    oncreate,
+    version
+    FROM imms_msg as u
+    <where>
+      <if test="moduleCode != null and moduleCode != '' ">
+        and module_code LIKE '%' #{moduleCode} '%'
+      </if>
+      <if test="actions != null and actions != '' ">
+        and actions  LIKE '%' #{actions} '%'
+      </if>
+      <if test="title != null and title != '' ">
+        and title  LIKE '%' #{title} '%'
+      </if>
+    </where>
+  </select>
+
+  <select id="getMsgList" resultType="com.example.imms.web.model.ImmsMsg">
+    SELECT
+    u.id            ,r.id as rid,
+    u.action_user_name  as actionUserName   ,
+    u.module_code   as moduleCode ,
+    u.module_name   as moduleName  ,
+    u.url           ,
+    u.actions        ,
+    u.sid           ,
+    sname,
+    u.title         ,
+    u.oncreate,
+    u.version,
+    s.lable isRead
+    FROM imms_msg as u
+    join imms_msg_rel_user as r on r.msg_id=u.id
+    join base_sysdictionary s on s.codevalue=r.is_read and s.columntype='MSG_IS_READ'
+    where r.user_id=#{userId}
+
+    <if test="moduleCode != null and moduleCode != '' ">
+      and u.module_code =#{moduleCode}
+    </if>
+    <if test="actions != null and actions != '' ">
+      and u.actions  LIKE '%' #{actions} '%'
+    </if>
+    <if test="title != null and title != '' ">
+      and u.title  LIKE '%' #{title} '%'
+    </if>
+    <if test="isRead != null and isRead != '' ">
+      and r.is_read= #{isRead}
+    </if>
+
+    order by r.is_read
+
+  </select>
+
+
+  <select id="getNews" parameterType="int" resultType="java.util.Map">
+    SELECT
+    u.id            ,r.id as rid,
+    u.action_user_name  as actionUserName   ,
+    u.module_code   as moduleCode ,
+    u.module_name   as moduleName  ,
+    u.url           ,
+    u.actions        ,
+    u.sid           ,
+    sname,
+    u.title         ,
+    u.oncreate,
+    u.version,
+    s.lable isRead
+    FROM imms_msg as u
+    join imms_msg_rel_user as r on r.msg_id=u.id
+    join base_sysdictionary s on s.codevalue=r.is_read and s.columntype='MSG_IS_READ'
+    where r.user_id=#{userId}
+ and r.is_read='0'
+
+  </select>
+
+
+  <insert id="insert" parameterType="com.example.imms.web.model.ImmsMsg" useGeneratedKeys="true" keyProperty="id">
+    insert into imms_msg(
+        action_user_name     ,
+    module_code    ,
+    module_name     ,
+    url           ,
+    actions        ,
+    sid           ,
+    sname,
+    title         ,
+    oncreate,
+        version)
+    values (
+    #{actionUserName,jdbcType=VARCHAR},
+    #{moduleCode,jdbcType=VARCHAR},
+    #{moduleName,jdbcType=VARCHAR},
+    #{url,jdbcType=VARCHAR},
+    #{actions,jdbcType=VARCHAR},
+    #{sid,jdbcType=INTEGER},
+    #{sname,jdbcType=VARCHAR},
+    #{title,jdbcType=VARCHAR},
+     #{oncreate,jdbcType=DATE},
+         #{version,jdbcType=VARCHAR}
+    )
+  </insert>
+
+  <delete  id="delete" parameterType="int" >
+    DELETE    FROM imms_msg WHERE id = #{id}
+  </delete >
+
+  <delete id="deleteBath"  parameterType = "java.util.List">
+    delete from imms_msg where 1>2
+    or id in
+    <foreach collection="ids"  item="id" open="(" separator="," close=")"  >
+      #{id}
+    </foreach>
+  </delete>
+
+
+  <delete  id="clearMsg"  >
+    DELETE     FROM imms_msg
+WHERE  id not in( select  msg_id  from imms_msg_rel_user  )
+  </delete >
+
+</mapper>

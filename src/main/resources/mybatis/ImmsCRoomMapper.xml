@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.imms.web.dao.ImmsCRoomMapper">
+    <resultMap id="BaseResultMap" type="com.example.imms.web.model.ImmsCRoom">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="cabinet_name" jdbcType="VARCHAR" property="cabinetName" />
+        <result column="dev_height"  jdbcType="VARCHAR" property="devHeight" />
+        <result column="dev_name" jdbcType="VARCHAR" property="devName" />
+        <result column="dev_manu" jdbcType="VARCHAR" property="devManu" />
+        <result column="dev_model"  jdbcType="VARCHAR" property="devModel" />
+        <result column="dev_number"  jdbcType="VARCHAR" property="devNumber" />
+        <result column="system"  jdbcType="VARCHAR" property="system" />
+        <result column="Safe_area"  jdbcType="VARCHAR" property="safeArea" />
+        <result column="maintain_level"  jdbcType="VARCHAR" property="maintainLevel" />
+        <result column="use_time"  jdbcType="VARCHAR" property="useTime" />
+        <result column="responsibility_dpt"  jdbcType="VARCHAR" property="responsibilityDpt" />
+        <result column="responsibility_man"  jdbcType="VARCHAR" property="responsibilityMan" />
+        <result column="maintain_manu"  jdbcType="VARCHAR" property="maintainManu" />
+        <result column="maintain_man"  jdbcType="VARCHAR" property="maintainMan" />
+        <result column="maintain_man_phone"  jdbcType="VARCHAR" property="maintainManPhone" />
+        <result column="ip"  jdbcType="VARCHAR" property="ip" />
+        <result column="room" jdbcType="VARCHAR" property="room" />
+        <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+        <result column="version" jdbcType="VARCHAR" property="version" />
+    </resultMap>
+
+    <select id="queryById" parameterType="int" resultMap="BaseResultMap">
+        SELECT * FROM imms_croom WHERE id = #{id}
+    </select>
+
+
+    <select id="selectByPrimaryKey" parameterType="int" resultMap="BaseResultMap">
+        SELECT * FROM imms_croom WHERE id = #{id}
+    </select>
+
+    <sql id="baseColumn">
+        id,
+        cabinet_name ,
+        dev_height,
+        dev_name ,
+        dev_manu  ,
+        dev_model,
+        dev_number,
+        system ,
+        Safe_area ,
+        maintain_level ,
+        use_time ,
+        responsibility_dpt ,
+        responsibility_man ,
+        maintain_manu ,
+        maintain_man ,
+        maintain_man_phone ,
+        ip ,
+        room,
+        remarks,
+        version
+    </sql>
+
+
+    <select id="getImmsCRoomMapperByNumber" resultMap="BaseResultMap">
+        SELECT <include refid="baseColumn"/>
+        FROM imms_croom
+        WHERE dev_number = #{devNumber}
+        <if test="id != null and id != ''  ">
+            and id != #{id}
+        </if>
+    </select>
+
+
+    <select id="getImmsCRoomList" resultType="com.example.imms.web.model.ImmsCRoom">
+        SELECT id, cabinet_name  as  cabinetName,
+        dev_height  as  devHeight,
+        dev_name  as  devName,
+        dev_manu  as  devManu,
+        dev_model  as  devModel,
+        dev_number  as  devNumber,
+        system  as  system,
+        Safe_area  as  safeArea,
+        maintain_level  as  maintainLevel,
+        use_time  as  useTime,
+        responsibility_dpt  as  responsibilityDpt,
+        responsibility_man  as  responsibilityMan,
+        maintain_manu  as  maintainManu,
+        maintain_man  as  maintainMan,
+        maintain_man_phone  as  maintainManPhone,
+        ip  as  ip,
+        room  as  room,
+        u.remarks AS remarks,
+        CONCAT('1_',u.id) two,
+        u.version
+
+        FROM imms_croom as u
+        <where>
+            <if test="sid != null and sid != '' and sid != -1">
+                and u.id =#{sid}
+            </if>
+            <if test="version != null and version != '' and version != 'undefined'  and version != 'null'">
+                and u.version =#{version}
+            </if>
+            <if test="cabinetName != null and cabinetName != '' ">
+                and cabinet_name LIKE '%' #{cabinetName} '%'
+            </if>
+            <if test="devName != null and devName != '' ">
+                and dev_name  LIKE '%' #{devName} '%'
+            </if>
+            <if test="devNumber != null and devNumber != '' ">
+                and dev_number  LIKE '%' #{devNumber} '%'
+            </if>
+
+            <if test="system != null and system != '' ">
+                and system  LIKE '%' #{system} '%'
+            </if>
+
+            <if test="ip != null and ip != '' ">
+                and ip  LIKE '%' #{ip} '%'
+            </if>
+
+            <if test="startTime != null and startTime != '' ">
+                and use_time &gt;  #{startTime}
+            </if>
+            <if test="endTime != null and endTime != '' ">
+                and use_time &lt;  #{endTime}
+            </if>
+        </where>
+
+        order by u.dev_number
+    </select>
+
+    <insert id="insert" parameterType="com.example.imms.web.model.ImmsCRoom" useGeneratedKeys="true" keyProperty="id">
+        insert into imms_croom (  cabinet_name, dev_height,
+        dev_name, dev_manu, dev_model,
+        dev_number, system, Safe_area,
+        maintain_level, use_time, responsibility_dpt,
+        responsibility_man, maintain_manu, maintain_man,
+        maintain_man_phone, ip, room,
+        remarks, version)
+        values (  #{cabinetName,jdbcType=VARCHAR}, #{devHeight,jdbcType=VARCHAR},
+        #{devName,jdbcType=VARCHAR}, #{devManu,jdbcType=VARCHAR}, #{devModel,jdbcType=VARCHAR},
+        #{devNumber,jdbcType=VARCHAR}, #{system,jdbcType=VARCHAR}, #{safeArea,jdbcType=VARCHAR},
+        #{maintainLevel,jdbcType=VARCHAR}, #{useTime,jdbcType=VARCHAR}, #{responsibilityDpt,jdbcType=VARCHAR},
+        #{responsibilityMan,jdbcType=VARCHAR}, #{maintainManu,jdbcType=VARCHAR}, #{maintainMan,jdbcType=VARCHAR},
+        #{maintainManPhone,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, #{room,jdbcType=VARCHAR},
+        #{remarks,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="insertBatchs" parameterType="com.example.imms.web.model.ImmsCRoom" useGeneratedKeys="true" keyProperty="id">
+        insert into imms_croom (  cabinet_name, dev_height,
+        dev_name, dev_manu, dev_model,
+        dev_number, system, Safe_area,
+        maintain_level, use_time, responsibility_dpt,
+        responsibility_man, maintain_manu, maintain_man,
+        maintain_man_phone, ip, room,
+        remarks, version)
+        values
+        <foreach collection="list" item="immsCRoom" separator=",">
+            (  #{immsCRoom.cabinetName,jdbcType=VARCHAR}, #{immsCRoom.devHeight,jdbcType=VARCHAR},
+            #{immsCRoom.devName,jdbcType=VARCHAR}, #{immsCRoom.devManu,jdbcType=VARCHAR}, #{immsCRoom.devModel,jdbcType=VARCHAR},
+            #{immsCRoom.devNumber,jdbcType=VARCHAR}, #{immsCRoom.system,jdbcType=VARCHAR}, #{immsCRoom.safeArea,jdbcType=VARCHAR},
+            #{immsCRoom.maintainLevel,jdbcType=VARCHAR}, #{immsCRoom.useTime,jdbcType=VARCHAR}, #{immsCRoom.responsibilityDpt,jdbcType=VARCHAR},
+            #{immsCRoom.responsibilityMan,jdbcType=VARCHAR}, #{immsCRoom.maintainManu,jdbcType=VARCHAR}, #{immsCRoom.maintainMan,jdbcType=VARCHAR},
+            #{immsCRoom.maintainManPhone,jdbcType=VARCHAR}, #{immsCRoom.ip,jdbcType=VARCHAR}, #{immsCRoom.room,jdbcType=VARCHAR},
+            #{immsCRoom.remarks,jdbcType=VARCHAR}, #{immsCRoom.version,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+
+
+    <update id="update" parameterType="map">
+        update imms_croom
+        <set>
+            <if test="id != null">
+                id = #{id,jdbcType=INTEGER},
+            </if>
+            <if test="cabinetName != null">
+                cabinet_name = #{cabinetName,jdbcType=VARCHAR},
+            </if>
+            <if test="devHeight != null">
+                dev_height = #{devHeight,jdbcType=VARCHAR},
+            </if>
+            <if test="devName != null">
+                dev_name = #{devName,jdbcType=VARCHAR},
+            </if>
+            <if test="devManu != null">
+                dev_manu = #{devManu,jdbcType=VARCHAR},
+            </if>
+            <if test="devModel != null">
+                dev_model = #{devModel,jdbcType=VARCHAR},
+            </if>
+            <if test="devNumber != null">
+                dev_number = #{devNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="system != null">
+                system = #{system,jdbcType=VARCHAR},
+            </if>
+            <if test="safeArea != null">
+                Safe_area = #{safeArea,jdbcType=VARCHAR},
+            </if>
+            <if test="maintainLevel != null">
+                maintain_level = #{maintainLevel,jdbcType=VARCHAR},
+            </if>
+            <if test="useTime != null">
+                use_time = #{useTime,jdbcType=VARCHAR},
+            </if>
+            <if test="responsibilityDpt != null">
+                responsibility_dpt = #{responsibilityDpt,jdbcType=VARCHAR},
+            </if>
+            <if test="responsibilityMan != null">
+                responsibility_man = #{responsibilityMan,jdbcType=VARCHAR},
+            </if>
+            <if test="maintainManu != null">
+                maintain_manu = #{maintainManu,jdbcType=VARCHAR},
+            </if>
+            <if test="maintainMan != null">
+                maintain_man = #{maintainMan,jdbcType=VARCHAR},
+            </if>
+            <if test="maintainManPhone != null">
+                maintain_man_phone = #{maintainManPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="ip != null">
+                ip = #{ip,jdbcType=VARCHAR},
+            </if>
+            <if test="room != null">
+                room = #{room,jdbcType=VARCHAR},
+            </if>
+            <if test="remarks != null">
+                remarks = #{remarks,jdbcType=VARCHAR},
+            </if>
+            <if test="version != null">
+                version = #{version,jdbcType=VARCHAR},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateBatchs" parameterType="com.example.imms.web.model.ImmsCRoom">
+        <foreach collection="list" separator=";" item="immsCRoom">
+            update imms_croom
+            <set>
+                <if test="immsCRoom.cabinetName != null">
+                    cabinet_name = #{immsCRoom.cabinetName},
+                </if>
+                <if test="immsCRoom.devHeight != null">
+                    dev_height = #{immsCRoom.devHeight},
+                </if>
+                <if test="immsCRoom.devName != null">
+                    dev_name = #{immsCRoom.devName},
+                </if>
+                <if test="immsCRoom.devManu != null">
+                    dev_manu = #{immsCRoom.devManu},
+                </if>
+                <if test="immsCRoom.devModel != null">
+                    dev_model = #{immsCRoom.devModel},
+                </if>
+                <if test="immsCRoom.devNumber != null">
+                    dev_number = #{immsCRoom.devNumber},
+                </if>
+                <if test="immsCRoom.system != null">
+                    system = #{immsCRoom.system},
+                </if>
+                <if test="immsCRoom.safeArea != null">
+                    Safe_area = #{immsCRoom.safeArea},
+                </if>
+                <if test="immsCRoom.maintainLevel != null">
+                    maintain_level = #{immsCRoom.maintainLevel},
+                </if>
+                <if test="immsCRoom.useTime != null">
+                    use_time = #{immsCRoom.useTime},
+                </if>
+                <if test="immsCRoom.responsibilityDpt != null">
+                    responsibility_dpt = #{immsCRoom.responsibilityDpt},
+                </if>
+                <if test="immsCRoom.responsibilityMan != null">
+                    responsibility_man = #{immsCRoom.responsibilityMan},
+                </if>
+                <if test="immsCRoom.maintainManu != null">
+                    maintain_manu = #{immsCRoom.maintainManu},
+                </if>
+                <if test="immsCRoom.maintainMan != null">
+                    maintain_man = #{immsCRoom.maintainMan},
+                </if>
+                <if test="immsCRoom.maintainManPhone != null">
+                    maintain_man_phone = #{immsCRoom.maintainManPhone},
+                </if>
+                <if test="immsCRoom.ip != null">
+                    ip = #{immsCRoom.ip},
+                </if>
+                <if test="immsCRoom.room != null">
+                    room = #{immsCRoom.room},
+                </if>
+                <if test="immsCRoom.remarks != null">
+                    remarks = #{immsCRoom.remarks},
+                </if>
+                <if test="immsCRoom.version != null">
+                    version = #{immsCRoom.version}
+                </if>
+            </set>
+            WHERE id = #{immsCRoom.id}
+        </foreach>
+    </update>
+
+
+    <delete  id="delete" parameterType="int" >
+        DELETE    FROM imms_croom WHERE id = #{id}
+    </delete >
+
+    <delete id="deleteBath"  parameterType = "java.util.List">
+        delete from imms_croom where 1>2
+        or id in
+        <foreach collection="ids"  item="id" open="(" separator="," close=")"  >
+            #{id}
+        </foreach>
+    </delete>
+
+
+</mapper>

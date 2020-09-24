@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org"
+       xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<link rel="stylesheet" type="text/css" href="/css/formSelects-v4.css"/>
+<head th:include="layout :: htmlhead" th:with="title='角色管理'"></head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <!--头-->
+    <div th:replace="fragments/head :: header"></div>
+
+    <div class="layui-body" style="margin: 1%">
+        <table id="roleList" lay-filter="roleTable"></table>
+
+        <button   th:if="${roleCode=='admin'}"  class="layui-btn layui-btn-normal  layui-icon layui-icon-addition" onclick="add()">新增</button>
+
+        <script type="text/html" id="optBar">
+            <a th:if="${roleCode=='admin'}" class="layui-btn layui-btn-xs  layui-icon layui-icon-edit" lay-event="edit">编辑</a>
+            <a  th:if="${roleCode=='admin'}" class="layui-btn layui-btn-danger layui-btn-xs layui-icon layui-icon-delete" lay-event="del">删除</a>
+        </script>
+    </div>
+
+    <!--添加或编辑-->
+    <div id="setRole" class="layer_self_wrap" style="width:500px;display:none;">
+        <form id="roleForm" class="layui-form layui-form-pane" method="post" action="" style="margin-top: 20px;">
+            <input id="pageNum" type="hidden" name="pageNum"/>
+            <input id="id" type="hidden" name="id"/>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">角色名称</label>
+                <div class="layui-input-inline">
+                    <input id="roleName" name="roleName" lay-verify="required" autocomplete="off" class="layui-input" type="text"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">角色编码</label>
+                <div class="layui-input-inline">
+                    <input id="roleCode" name="roleCode" lay-verify="required" autocomplete="off" class="layui-input" type="text"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">角色描述</label>
+                <div class="layui-input-inline">
+                    <input id="roleDesc" name="roleDesc" lay-verify="required" autocomplete="off" class="layui-input" type="text"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">权限</label>
+                <div class="layui-input-inline">
+                    <select name="permissions"  xm-select="permissions">
+
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block" style="margin-left: 10px;">
+                    <button class="layui-btn"  lay-submit="" lay-filter="roleSubmit">提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!--底部-->
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <script type="text/javascript" src="/js/dateUtils.js"></script>
+    <script  src="/js/role/roleManage.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

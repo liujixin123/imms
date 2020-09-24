@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--head部分-->
+<head th:include="layout :: htmlhead" th:with="title='机房仓库管理'">
+ </head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin" >
+    <!--头-->
+
+    <!--主体区域-->
+    <div class="" style="margin: 10%; ">
+
+
+        <div id="setDev" class="margin-top: 10px;"  >
+            <a href="/room/getImmsCRoomList/download"  class="layui-btn" style="width: 400px"> 下载模板</a>
+
+            <div class="layui-form-item">
+                <span style="color: red"> * 请严格按照上面的模版提供数据（从模板第二行填写数据...）</span>
+            </div>
+
+
+        <form action="/room/import" method="post" class="layui-form layui-form-pane" style="margin-top: 20px;" enctype="multipart/form-data" name="form1">
+             <div class="layui-form-item">
+                <label class="layui-form-label">上传文件</label>
+                <div class="layui-input-inline" style="margin-left: 15px">
+                    <input type="file" name="multipartFile" id="no1" class="layui-btn layui-btn-normal" style="background-color: #393D49" />
+                </div>
+            </div>
+            <br/>
+            <div class="layui-form-item" >
+
+                <button type="reset" class="layui-btn layui-btn-primary" style="width: 110px">重置</button>
+                <input class="layui-btn"   id="btn1" type="submit" value="确认导入" style="width: 270px"/>
+            </div>
+        </form>
+
+
+
+        </div>
+
+    </div>
+
+</body>
+</html>

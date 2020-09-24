@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org"
+       xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="layout :: htmlhead" th:with="title='用户管理'"></head>
+<body class="">
+<div class="">
+
+    <div class="" style="margin: 1%;">
+
+        <form id="userSearch" class="layui-form layui-form-pane" method="post" action="" style="margin-top: 20px;">
+            <div class="" style="height:30px;margin-top: 1%;margin-bottom: 1%;margin-right: 1% ;border:2px solid #e2e2e2;background-color: #e2e2e2">
+                <span  style="color: red; "> * &nbsp;</span> 订阅模块
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">消息模块</label>
+                <div class="layui-input-inline">
+                    <select name="moduleCode"  id="moduleCode" lay-filter="moduleCode">
+                        <option value='' selected>请选择</option>
+                    </select>
+                </div>
+
+
+                <label class="layui-form-label"> 消息级别</label>
+                <div class="layui-input-inline">
+                    <select name="lv"  id="lv" >
+                        <option value='' selected>请选择</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="" style="height:30px;margin-top: 1%;margin-bottom: 1%;margin-right: 1% ; border:2px solid #e2e2e2;background-color: #e2e2e2">
+                <span  style="color: red; "> * &nbsp;</span>订阅人员
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">登录账号</label>
+                <div class="layui-input-inline">
+                    <input id="sysUserName" name="sysUserName" autocomplete="off" class="layui-input" type="text"/>
+                </div>
+                <label class="layui-form-label">角色类型</label>
+                <div class="layui-input-inline">
+                    <select name="roleId"  id="roleId" >
+                        <option value='' selected>请选择</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">注册时间</label>
+                    <div class="layui-input-inline" style="width: 175px;">
+                        <input  name="startTime" id="startTime" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" type="text"/>
+                    </div>
+                    <div class="layui-form-mid">-</div>
+                    <div class="layui-input-inline" style="width: 175px;">
+                        <input name="endTime" id="endTime" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" type="text"/>
+                    </div>
+                 <!--   <button type="reset" class="layui-btn layui-btn-primary">重置</button>-->
+                    <button id="searchSubmit" class="layui-btn"  lay-submit="" lay-filter="searchSubmit">查询人员</button>
+                    <button class="layui-btn layui-btn-normal" type="button" onclick="addMsg()">
+                         确定订阅
+                    </button>
+                </div>
+            </div>
+        </form>
+
+         <hr class="layui-bg-black"/>
+        <div style="display:none;" id="currentUser"><shiro:principal property="id"></shiro:principal></div>
+        <table id="uesrList" lay-filter="userTable" ></table>
+
+    </div>
+
+    <script type="text/javascript" src="/js/jquery/jquery-3.3.1.min.js"></script>
+    <script src="/js/dateUtils.js"></script>
+    <script src="/js/sysUser/userInnerList.js"></script>
+
+</div>
+</body>
+</html>

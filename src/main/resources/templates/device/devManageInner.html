@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org"
+       xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="layout :: htmlhead" th:with="title='库房设备'"></head>
+<body>
+<div >
+    <!--头-->
+
+    <div  style="margin: 1%">
+
+        <form id="userSearch"   method="post" action="" style="margin-top: 20px;">
+            <input id="sid"  type="hidden" name="sid"  th:value="${sid}"/>
+            <input id="version"  type="hidden" name="version"  th:value="${version}"/>
+        </form>
+
+        <table id="immsSRoomList" lay-filter="devTable"></table>
+
+
+        <script type="text/html" id="twoBar">
+            <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="queryTwo" style="background-color: #FFB800">查看二维码</a>
+        </script>
+
+    </div>
+
+    <!--底部-->
+     <script  src="/js/dateUtils.js" type="text/javascript"></script>
+    <script  src="/js/electric/immsSRoomInnerList.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

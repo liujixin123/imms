@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.imms.web.dao.BaseAdminUserMapper">
+  <resultMap id="BaseResultMap" type="com.example.imms.web.model.BaseAdminUser">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="sys_user_name" jdbcType="VARCHAR" property="sysUserName" />
+    <result column="sys_user_pwd" jdbcType="VARCHAR" property="sysUserPwd" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="role_id" jdbcType="INTEGER" property="roleId" />
+    <result column="user_phone" jdbcType="VARCHAR" property="userPhone" />
+    <result column="user_status" jdbcType="INTEGER" property="userStatus" />
+    <result column="reg_time" jdbcType="VARCHAR" property="regTime" />
+  </resultMap>
+
+  <select id="selectByPrimaryKey" parameterType="int" resultMap="BaseResultMap">
+    SELECT * FROM base_admin_user WHERE id = #{id}
+  </select>
+
+  <sql id="baseColumn">
+    id,sys_user_name,sys_user_pwd,user_name,user_status,reg_time,user_phone,role_id
+  </sql>
+
+
+  <update id="updateUser">
+    UPDATE base_admin_user
+    <set>
+      <if test="sysUserName != null and sysUserName != ''">
+        sys_user_name = #{sysUserName},
+      </if>
+      <if test="userName != null and userName!=''">
+        user_name = #{userName},
+      </if>
+      <if test="sysUserPwd != null and sysUserPwd !=''">
+        sys_user_pwd = #{sysUserPwd},
+      </if>
+      <if test="userName != null and userName !='' ">
+        user_name  = #{userName},
+      </if>
+      <if test="roleId != null">
+        role_id = #{roleId},
+      </if>
+      <if test="userPhone != null and userPhone !=''">
+        user_phone = #{userPhone}
+      </if>
+    </set>
+    WHERE id = #{id}
+  </update>
+
+
+  <update id="updatePwd">
+    UPDATE base_admin_user
+    set sys_user_pwd = #{password}
+    where sys_user_name = #{userName}
+  </update>
+
+  <update id="updateUserStatus">
+    UPDATE base_admin_user
+    SET user_status = #{status}
+    WHERE id = #{id}
+  </update>
+
+
+  <select id="getUserByUserName" resultMap="BaseResultMap">
+    SELECT <include refid="baseColumn"/>
+    FROM base_admin_user
+    WHERE sys_user_name = #{sysUserName}
+    and user_status = 1
+    <if test="id != null">
+      and id != #{id}
+    </if>
+  </select>
+
+  <select id="findByUserName" resultMap="BaseResultMap">
+    SELECT <include refid="baseColumn"/>
+    FROM base_admin_user
+    WHERE sys_user_name = #{userName}
+    and user_status = 1
+  </select>
+
+  <select id="getUserList" resultType="com.example.imms.web.dto.AdminUserDTO">
+    SELECT id, sys_user_name AS sysUserName ,user_name as userName,role_id AS roleId,
+    (SELECT role_name FROM base_admin_role as r WHERE r.id = u.role_id) as roleName,
+    user_phone AS userPhone,reg_time AS regTime,user_status AS userStatus
+    FROM base_admin_user as u
+    <where>
+      <if test="roleId != null and roleId != '' ">
+        and role_id LIKE '%' #{roleId} '%'
+      </if>
+      <if test="sysUserName != null and sysUserName != '' ">
+        and sys_user_name LIKE '%' #{sysUserName} '%'
+      </if>
+      <if test="userPhone != null and userPhone != '' ">
+        and user_phone  LIKE '%' #{userPhone} '%'
+      </if>
+      <if test="startTime != null and startTime != '' ">
+        and reg_time &gt;  #{startTime}
+      </if>
+      <if test="endTime != null and endTime != '' ">
+        and reg_time &lt;  #{endTime}
+      </if>
+    </where>
+  </select>
+
+
+  <select id="getUserMsgSignList" resultType="com.example.imms.web.dto.AdminUserDTO">
+    SELECT id, sys_user_name AS sysUserName ,user_name as userName,role_id AS roleId,
+    (SELECT role_name FROM base_admin_role as r WHERE r.id = u.role_id) as roleName,
+    user_phone AS userPhone,reg_time AS regTime,user_status AS userStatus
+    FROM base_admin_user as u
+    <where>
+
+      <choose>
+        <when test="moduleCode != null and moduleCode != '' ">
+          and  u.id not in(select user_id from imms_msg_user where module_code=#{moduleCode})
+        </when>
+        <otherwise>
+          and  u.id is null
+        </otherwise>
+      </choose>
+      <if test="roleId != null and roleId != '' and roleId != '0' ">
+        and role_id LIKE '%' #{roleId} '%'
+      </if>
+      <if test="sysUserName != null and sysUserName != '' ">
+        and sys_user_name LIKE '%' #{sysUserName} '%'
+      </if>
+      <if test="userPhone != null and userPhone != '' ">
+        and user_phone  LIKE '%' #{userPhone} '%'
+      </if>
+      <if test="startTime != null and startTime != '' ">
+        and reg_time &gt;  #{startTime}
+      </if>
+      <if test="endTime != null and endTime != '' ">
+        and reg_time &lt;  #{endTime}
+      </if>
+    </where>
+  </select>
+
+
+  <insert id="insertUser" parameterType="com.example.imms.web.model.BaseAdminUser" useGeneratedKeys="true" keyProperty="id">
+    insert into base_admin_user(
+   sys_user_name,sys_user_pwd,user_name,user_status,reg_time,user_phone,role_id)
+    values (
+    #{sysUserName,jdbcType=VARCHAR},
+    #{sysUserPwd,jdbcType=VARCHAR},
+    #{userName,jdbcType=VARCHAR},
+   '1',
+    #{regTime,jdbcType=VARCHAR},
+     #{userPhone,jdbcType=VARCHAR},
+      #{roleId,jdbcType=INTEGER}
+    )
+  </insert>
+
+  <delete  id="delete" parameterType="int" >
+    DELETE    FROM base_admin_user WHERE id = #{id}
+  </delete >
+
+</mapper>

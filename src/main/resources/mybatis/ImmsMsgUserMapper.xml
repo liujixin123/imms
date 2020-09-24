@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.imms.web.dao.ImmsMsgUserMapper">
+  <resultMap id="BaseResultMap" type="com.example.imms.web.model.ImmsMsgUser">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="user_id" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="module_code" jdbcType="VARCHAR" property="moduleCode" />
+    <result column="module_name" jdbcType="VARCHAR" property="moduleName" />
+    <result column="lv"  jdbcType="VARCHAR" property="lv" />
+  </resultMap>
+
+  <select id="queryById" parameterType="int" resultMap="BaseResultMap">
+    SELECT * FROM imms_msg_user WHERE id = #{id}
+  </select>
+
+  <sql id="baseColumn">
+    id            ,
+    user_id           ,
+    user_name     ,
+    module_code    ,
+    module_name     ,
+    lv
+  </sql>
+
+
+  <select id="getMsgUserList" resultType="com.example.imms.web.model.ImmsMsgUser">
+    SELECT
+    id            ,
+    user_id     as userId      ,
+    user_name  as userName   ,
+    module_code   as moduleCode ,
+    module_name   as moduleName  ,
+    lv
+    FROM imms_msg_user as u
+    <where>
+      <if test="moduleCode != null and moduleCode != '' ">
+        and module_code LIKE '%' #{moduleCode} '%'
+      </if>
+      <if test="userId != null and userId != '' ">
+        and user_id  LIKE '%' #{userId} '%'
+      </if>
+    </where>
+  </select>
+
+
+  <select id="getSignMsgList" resultType="com.example.imms.web.model.ImmsMsgUser">
+    SELECT
+    u.id            ,
+    u.user_id     as userId      ,
+    u.user_name  as userName   ,
+    u.module_code   as moduleCode ,
+    u.module_name   as moduleName  ,
+    s.lable lv
+    FROM imms_msg_user as u
+    left join base_sysdictionary s on s.codevalue=u.lv and s.columntype='MSGTYPE'
+    <where>
+      <if test="userName != null and userName != '' ">
+        and u.user_name like '%' #{userName} '%'
+      </if>
+      <if test="moduleCode != null and moduleCode != '' ">
+        and u.module_code  =  #{moduleCode}
+      </if>
+
+    </where>
+  </select>
+
+  <select id="getMsgByModule"  resultType="com.example.imms.web.model.ImmsMsgUser">
+    SELECT
+    id            ,
+    user_id     as userId      ,
+    user_name  as userName   ,
+    module_code   as moduleCode ,
+    module_name   as moduleName  ,
+    lv
+    FROM imms_msg_user as u
+    <where>
+      <if test="module != null and module != '' ">
+        and module_code  =  #{module}
+      </if>
+      <if test="userId != null and userId != '' ">
+        and user_id  !=  #{userId}
+      </if>
+    </where>
+  </select>
+
+  <insert id="insertBath" parameterType="com.example.imms.web.model.ImmsMsgUser">
+    insert into imms_msg_user(
+    user_id           ,
+    user_name     ,
+    module_code    ,
+    module_name     ,
+    lv
+    ) VALUES
+    <foreach collection="immsMsgUsers" item="immsMsgUser" separator=",">
+      (#{immsMsgUser.userId},
+      #{immsMsgUser.userName},
+      #{immsMsgUser.moduleCode},
+      #{immsMsgUser.moduleName},
+      #{immsMsgUser.lv})
+    </foreach>
+  </insert>
+
+  <delete  id="delete" parameterType="int" >
+    DELETE    FROM imms_msg_user WHERE id = #{id}
+  </delete >
+
+</mapper>

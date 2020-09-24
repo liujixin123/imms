@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org"
+       xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="layout :: htmlhead" th:with="title='用户管理'"></head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <!--头-->
+    <div th:replace="fragments/head :: header"></div>
+
+    <div class="layui-body" style="margin: 1%">
+
+        <form id="userSearch" class="layui-form layui-form-pane" method="post" action="" style="margin-top: 20px;">
+            <div class="layui-form-item">
+                <label class="layui-form-label">订阅人员</label>
+                <div class="layui-input-inline">
+                    <input id="userName" name="userName" autocomplete="off" class="layui-input" type="text"/>
+                </div>
+                <label class="layui-form-label">订阅模块</label>
+                <div class="layui-input-inline">
+                    <select name="moduleCode"  id="moduleCode" >
+                        <option value='' selected>请选择</option>
+                    </select>
+                </div>
+
+                <div class="layui-inline">
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    <button class="layui-btn"  lay-submit="" lay-filter="searchSubmit">查询</button>
+                </div>
+
+            </div>
+            <!--<div class="layui-form-item">
+                <div class="layui-inline">
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    <button class="layui-btn"  lay-submit="" lay-filter="searchSubmit">查询</button>
+                </div>
+            </div>-->
+        </form>
+
+        <!--<hr class="layui-bg-blue"/>-->
+        <hr class="layui-bg-black"/>
+
+        <button class="layui-btn layui-btn-normal  layui-icon layui-icon-addition" type="button" onclick="addMsgUser()">订阅</button>
+
+        <div style="display:none;" id="currentUser"><shiro:principal property="id"></shiro:principal></div>
+
+        <table id="msgUserList" lay-filter="dicTable"></table>
+
+        <script type="text/html" id="optBar">
+         <!--   <a class="layui-btn layui-btn-xs  layui-icon layui-icon-edit" lay-event="edit">编辑</a>-->
+            <a class="layui-btn layui-btn-danger layui-btn-xs layui-icon layui-icon-delete" lay-event="del">删除</a>
+
+        </script>
+    </div>
+
+
+    <!--底部-->
+    <div th:replace="fragments/footer :: footer"></div>
+    <script src="/js/dateUtils.js"></script>
+    <script src="/js/msg/msgSign.js"></script>
+
+</div>
+</body>
+</html>

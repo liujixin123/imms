@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org"
+       xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="layout :: htmlhead" th:with="title='库房设备'"></head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <!--头-->
+    <div th:replace="fragments/head :: header"></div>
+
+    <div class="layui-body" style="margin: 1%">
+
+        <form id="userSearch" class="layui-form layui-form-pane" method="post" action="" style="margin-top: 20px;">
+
+            <input id="devStatus"  type="hidden" name="devStatus"    />
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">设备类型</label>
+                <div class="layui-input-inline">
+                    <input id="devType" name="devType" autocomplete="off" class="layui-input" type="text"/>
+                </div>
+                <label class="layui-form-label">设备型号</label>
+                <div class="layui-input-inline">
+                    <input id="devModel" name="devModel" autocomplete="off" class="layui-input" type="text"/>
+                </div>
+                <label class="layui-form-label">设备序列号</label>
+                <div class="layui-input-inline">
+                    <input id="devNumber" name="devNumber" autocomplete="off" class="layui-input" type="text"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">所属项目</label>
+                    <div class="layui-input-inline">
+                        <input id="project" name="project" autocomplete="off" class="layui-input" type="text"/>
+                    </div>
+
+                    <label class="layui-form-label">备注</label>
+                    <div class="layui-input-inline">
+                        <input id="remarks1" name="remarks" autocomplete="off" class="layui-input" type="text"/>
+                    </div>
+
+                    <label class="layui-form-label">入库时间</label>
+                    <div class="layui-input-inline" style="width: 175px;">
+                        <input  name="startTime" id="startTime" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" type="text"/>
+                    </div>
+                    <div class="layui-form-mid">-</div>
+                    <div class="layui-input-inline" style="width: 175px;">
+                        <input name="endTime" id="endTime" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" type="text"/>
+                    </div>
+
+
+
+<!--                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    <button class="layui-btn"  lay-submit="" lay-filter="searchSubmit">查询</button>-->
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                <button class="layui-btn"  lay-submit="" lay-filter="searchSubmit">查询</button>
+            </div>
+        </form>
+
+        <!--<hr class="layui-bg-blue"/>-->
+        <hr class="layui-bg-black"/>
+
+        <button class="layui-btn layui-btn-normal layui-icon layui-icon-addition" onclick="addDev()">新增</button>
+        <button class="layui-btn layui-btn-normal" onclick="addDevBath()">导入EXCEL</button>
+
+
+<!--        <a href="/device/getImmsSRoomList/download2"  class="layui-btn layui-btn-normal"><i class="fa fa-download"></i>下载EXCEL模板</a>-->
+<!--        <a href="/device/getImmsSRoomList/export2"  class="layui-btn layui-btn-normal"><i class="fa fa-download"></i>导出</a>-->
+
+        <a onclick="doexport(this)"  class="layui-btn layui-btn-normal"><i class="fa fa-download"></i>导出</a>
+        <a onclick="doexportAll(this)"  class="layui-btn layui-btn-danger"><i class="fa fa-download"></i>导出全量</a>
+        <a href="/device/export/two"  class="layui-btn layui-btn-danger"><i class="fa fa-download"></i>导出二维码</a>
+        <button th:if="${roleCode=='admin'}" class="layui-btn layui-btn-danger" type="button" onclick="deleteDevBatch()">
+            批量删除
+        </button>
+
+        <table id="immsSRoomList" lay-filter="devTable"></table>
+
+        <script type="text/html" id="optBar">
+            <a class="layui-btn layui-btn-xs layui-icon layui-icon-edit" lay-event="edit">编辑</a>
+            <a th:if="${roleCode=='admin'}"  class="layui-btn layui-btn-danger layui-btn-xs layui-icon layui-icon-delete" lay-event="del">删除</a>
+        </script>
+
+        <script type="text/html" id="twoBar">
+            <a th:if="${roleCode=='admin'}" class="layui-btn layui-btn-normal layui-btn-xs" lay-event="createTwo">生成二维码</a>
+            <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="queryTwo" style="background-color: #FFB800">查看二维码</a>
+        </script>
+
+    </div>
+
+
+    <!--添加或编辑用户-->
+    <div id="setDev" class="layer_self_wrap" style="width:950px;display:none;margin-left:45px">
+        <form id="devForm" class="layui-form layui-form-pane" method="post" action="" style="margin-top: 20px;">
+            <input id="pageNum" type="hidden" name="pageNum"/>
+            <input id="id" type="hidden" name="id"/>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span  style="color: red; "> * &nbsp;</span>设备类型</label>
+                <div class="layui-input-inline">
+                    <!--<input id="devType2" name="devType" lay-verify="required" autocomplete="off" class="layui-input" type="text"/>-->
+                    <select name="devType"  id="devType2" lay-verify="required"  >
+                        <option value='' selected>请选择</option>
+                    </select>
+                </div>
+                <label class="layui-form-label"><span  style="color: red; "> * &nbsp;</span>制造商</label>
+                <div class="layui-input-inline">
+                    <input id="devManu2" name="devManu"  lay-verify="required" autocomplete="off" class="layui-input" type="text"/>
+                </div>
+                <label class="layui-form-label"><span  style="color: red; "> * &nbsp;</span>设备型号</label>
+                <div class="layui-input-inline">
+                    <input id="devModel2" name="devModel"  lay-verify="required" autocomplete="off" class="layui-input" type="text"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+
+                <label class="layui-form-label"><span  style="color: red; "> * &nbsp;</span>设备序列号</label>
+                <div class="layui-input-inline">
+                    <input id="devNumber2" name="devNumber"  lay-verify="required" autocomplete="off" class="layui-input" type="text"/>
+                </div>
+                <label class="layui-form-label"><span  style="color: red; "> * &nbsp;</span>入库时间</label>
+                <div class="layui-input-inline">
+          <!--          <input id="inRoomTime2" name="inRoomTime" lay-verify="required" autocomplete="off" class="layui-input" type="text"/>-->
+                    <input  id="inRoomTime2"  name="inRoomTime" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" type="text" lay-verify="required" />
+                </div>
+
+                <label class="layui-form-label"><span  style="color: red; "> * &nbsp;</span>类别</label>
+                <div class="layui-input-inline">
+                  <!--  <input id="useType2" name="useType" lay-verify="required" autocomplete="off" class="layui-input" type="text"/>-->
+                    <select name="useType"  id="useType2" lay-verify="required" >
+                        <option value='' selected>请选择</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+
+                <label class="layui-form-label"><span  style="color: red; "> * &nbsp;</span>接收人</label>
+                <div class="layui-input-inline">
+                    <input id="receiver2" name="receiver" lay-verify="required" autocomplete="off" class="layui-input" type="text"/>
+                </div>
+
+                <label class="layui-form-label"><span  style="color: red; "> * &nbsp;</span>存放地点</label>
+                <div class="layui-input-inline">
+                    <input id="devAddress2" name="devAddress" lay-verify="required" autocomplete="off" class="layui-input" type="text"/>
+                </div>
+
+                <label class="layui-form-label"><span  style="color: red; "> * &nbsp;</span>责任处室</label>
+                <div class="layui-input-inline">
+                    <input id="responsibilityDpt2" name="responsibilityDpt" lay-verify="required" autocomplete="off" class="layui-input" type="text"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+
+                <label class="layui-form-label"><span  style="color: red; "> * &nbsp;</span>责任人</label>
+                <div class="layui-input-inline">
+                    <input id="responsibilityMan2" name="responsibilityMan" lay-verify="required" autocomplete="off" class="layui-input" type="text"/>
+                </div>
+
+                <label class="layui-form-label"><span  style="color: red; "> * &nbsp;</span>所属项目</label>
+                <div class="layui-input-inline">
+                    <input id="project2" name="project" lay-verify="required" autocomplete="off" class="layui-input" type="text"/>
+                </div>
+                <label class="layui-form-label"><span  style="color: red; "> * &nbsp;</span>设备状态</label>
+                <div class="layui-input-inline">
+                  <!--  <input id="devStatus2" name="devStatus" lay-verify="required" autocomplete="off" class="layui-input" type="text"/>-->
+                    <select name="devStatus"  id="devStatus2"  autocomplete="off"  class="layui-select">
+                        <option value='IN' selected>库存</option>
+                        <option value='OUT'>出库</option>
+                    </select>
+                </div>
+
+            </div>
+            <div class="layui-form-item" id="outroom">
+
+                <label class="layui-form-label">出库时间</label>
+                <div class="layui-input-inline">
+                 <!--   <input id="outRoomTime2" name="outRoomTime"  autocomplete="off" class="layui-input" type="text"/>-->
+                    <input  id="outRoomTime2"  name="outRoomTime" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input" type="text" />
+                </div>
+
+                <label class="layui-form-label">出货人</label>
+                <div class="layui-input-inline">
+                    <input id="outRoomUser2" name="outRoomUser"  autocomplete="off" class="layui-input" type="text"/>
+                </div>
+
+
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="height: 100px;">备注</label>
+                <div class="layui-input-inline">
+                    <textarea id="remarks" name="remarks"  style ="width:810px;height: 100px; border:solid 1px lightgrey"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block" style="margin-left: 10px;">
+                    <button class="layui-btn"  lay-submit="" lay-filter="devSubmit">提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!--底部-->
+    <div th:replace="fragments/footer :: footer"></div>
+    <script  src="/js/dateUtils.js" type="text/javascript"></script>
+    <script  src="/js/electric/immsSRoomList.js" type="text/javascript"></script>
+
+</div>
+</body>
+</html>

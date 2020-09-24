@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.imms.web.dao.ImmsSRoomMapper">
+  <resultMap id="BaseResultMap" type="com.example.imms.web.model.ImmsSRoom">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="dev_type" jdbcType="VARCHAR" property="devType" />
+    <result column="dev_manu" jdbcType="VARCHAR" property="devManu" />
+    <result column="dev_model" jdbcType="VARCHAR" property="devModel" />
+    <result column="dev_number"  jdbcType="VARCHAR" property="devNumber" />
+    <result column="in_room_time" jdbcType="VARCHAR" property="inRoomTime" />
+    <result column="use_type" jdbcType="VARCHAR" property="useType" />
+    <result column="receiver" jdbcType="VARCHAR" property="receiver" />
+    <result column="dev_address" jdbcType="VARCHAR" property="devAddress" />
+    <result column="responsibility_dpt" jdbcType="VARCHAR" property="responsibilityDpt" />
+    <result column="responsibility_man" jdbcType="VARCHAR" property="responsibilityMan" />
+    <result column="project" jdbcType="VARCHAR" property="project" />
+    <result column="dev_status" jdbcType="VARCHAR" property="devStatus" />
+    <result column="out_room_time" jdbcType="VARCHAR" property="outRoomTime" />
+    <result column="out_room_user" jdbcType="VARCHAR" property="outRoomUser" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="dev_go" jdbcType="VARCHAR" property="devGo" />
+  </resultMap>
+
+  <select id="queryById" parameterType="int" resultMap="BaseResultMap">
+    SELECT * FROM imms_sroom WHERE id = #{id}
+  </select>
+
+  <select id="getImmsSRoomMapperByNumber" resultMap="BaseResultMap">
+    SELECT <include refid="baseColumn"/>
+    FROM imms_sroom
+    WHERE dev_number = #{devNumber}
+    <if test="id != null and id != ''  ">
+      and id != #{id}
+    </if>
+  </select>
+
+  <sql id="baseColumn">
+    id,
+    dev_type ,
+    dev_manu ,
+    dev_model ,
+    dev_number,
+    in_room_time ,
+    use_type ,
+    receiver ,
+    dev_address ,
+    responsibility_dpt ,
+    responsibility_man ,
+    project ,
+    dev_status ,
+    out_room_time ,
+    out_room_user ,
+    remarks,
+    version
+  </sql>
+
+
+
+  <select id="getImmsSRoomList" resultType="com.example.imms.web.model.ImmsSRoom">
+    SELECT
+    u.id,
+    u.dev_type  AS devType ,
+    u.dev_manu  AS devManu ,
+    u.dev_model  AS devModel ,
+    u.dev_number AS devNumber,
+    u.in_room_time  AS inRoomTime ,
+    u.use_type  AS useType ,
+    u.receiver  AS receiver ,
+    u.dev_address  AS devAddress ,
+    u.responsibility_dpt  AS responsibilityDpt ,
+    u.responsibility_man  AS responsibilityMan ,
+    u.project  AS project ,
+    s.lable  AS devStatus ,
+    u.out_room_time  AS outRoomTime ,
+    u.out_room_user  AS outRoomUser ,
+    u.dev_go devGo,
+    u.remarks AS remarks,
+    CONCAT('2_',u.id) two,
+    u.version
+    FROM imms_sroom as u
+    join base_sysdictionary s on s.codevalue=u.dev_status and s.columntype='DEVSTATUS'
+    <where>
+      <if test="sid != null and sid != '' and sid != -1">
+        and u.id =#{sid}
+      </if>
+      <if test="version != null and version != '' and version != 'undefined'  and version != 'null'">
+        and u.version =#{version}
+      </if>
+      <if test="devType != null and devType != '' ">
+        and u.dev_type LIKE '%' #{devType} '%'
+      </if>
+      <if test="devModel != null and devModel != '' ">
+        and u.dev_model  LIKE '%' #{devModel} '%'
+      </if>
+      <if test="devNumber != null and devNumber != '' ">
+        and u.dev_number  LIKE '%' #{devNumber} '%'
+      </if>
+      <if test="project != null and project != '' ">
+        and u.project  LIKE '%' #{project} '%'
+      </if>
+      <if test="startTime != null and startTime != '' ">
+        and u.in_room_time &gt;=  #{startTime}
+      </if>
+      <if test="endTime != null and endTime != '' ">
+        and u.in_room_time &lt;=  #{endTime}
+      </if>
+      <if test="devStatus != null and devStatus != '' ">
+        and u.dev_status =#{devStatus}
+      </if>
+      <if test="remarks != null and remarks != '' ">
+        and u.remarks  LIKE '%'  #{remarks} '%'
+      </if>
+    </where>
+    order by u.dev_number
+  </select>
+
+
+  <select id="queryImmsSRoomExcelList" resultType="com.example.imms.web.model.ImmsSRoomExcel">
+    SELECT
+    dev_type  AS devType ,
+    dev_manu  AS devManu ,
+    dev_model  AS devModel ,
+    dev_number AS devNumber,
+    in_room_time  AS inRoomTime ,
+    use_type  AS useType ,
+    receiver  AS receiver ,
+    dev_address  AS devAddress ,
+    responsibility_dpt  AS responsibilityDpt ,
+    responsibility_man  AS responsibilityMan ,
+    project  AS project ,
+    CONCAT('2_',id) two
+    FROM imms_sroom as u
+    <where>
+      <if test="devType != null and devType != '' ">
+        and dev_type LIKE '%' #{devType} '%'
+      </if>
+      <if test="devModel != null and devModel != '' ">
+        and dev_model  LIKE '%' #{devModel} '%'
+      </if>
+      <if test="startTime != null and startTime != '' ">
+        and in_room_time &gt;  #{startTime}
+      </if>
+      <if test="endTime != null and endTime != '' ">
+        and in_room_time &lt;  #{endTime}
+      </if>
+    </where>
+  </select>
+
+
+  <insert id="insert" parameterType="com.example.imms.web.model.ImmsSRoom" useGeneratedKeys="true" keyProperty="id">
+    insert into imms_sroom(
+    dev_type ,
+    dev_manu ,
+    dev_model ,
+    dev_number,
+    in_room_time ,
+    use_type ,
+    receiver ,
+    dev_address ,
+    responsibility_dpt ,
+    responsibility_man ,
+    project ,
+    dev_status ,
+    out_room_time ,
+    out_room_user ,
+    remarks,
+    version)
+    values (
+    #{devType,jdbcType=VARCHAR},
+    #{devManu,jdbcType=VARCHAR},
+    #{devModel,jdbcType=VARCHAR},
+    #{devNumber,jdbcType=VARCHAR},
+    #{inRoomTime,jdbcType=VARCHAR},
+    #{useType,jdbcType=VARCHAR},
+    #{receiver,jdbcType=VARCHAR},
+    #{devAddress,jdbcType=VARCHAR},
+    #{responsibilityDpt,jdbcType=VARCHAR},
+    #{responsibilityMan,jdbcType=VARCHAR},
+    #{project,jdbcType=VARCHAR},
+    #{devStatus,jdbcType=VARCHAR},
+    #{outRoomTime,jdbcType=VARCHAR},
+    #{outRoomUser,jdbcType=VARCHAR},
+    #{remarks,jdbcType=VARCHAR},
+    #{version,jdbcType=VARCHAR}
+    )
+  </insert>
+
+
+  <insert id="insertBatchs" parameterType="com.example.imms.web.model.ImmsSRoom"  useGeneratedKeys="true" keyProperty="id">
+    insert into imms_sroom(
+    dev_type ,
+    dev_manu ,
+    dev_model ,
+    dev_number,
+    in_room_time ,
+    use_type ,
+    receiver ,
+    dev_address ,
+    responsibility_dpt ,
+    responsibility_man ,
+    project ,
+    dev_status ,
+    out_room_time ,
+    out_room_user ,
+    remarks,
+    version)
+    values
+    <foreach collection="list" item="immsSRoom" separator=",">
+      ( #{immsSRoom.devType,jdbcType=VARCHAR},
+      #{immsSRoom.devManu,jdbcType=VARCHAR},
+      #{immsSRoom.devModel,jdbcType=VARCHAR},
+      #{immsSRoom.devNumber,jdbcType=VARCHAR},
+      #{immsSRoom.inRoomTime,jdbcType=VARCHAR},
+      #{immsSRoom.useType,jdbcType=VARCHAR},
+      #{immsSRoom.receiver,jdbcType=VARCHAR},
+      #{immsSRoom.devAddress,jdbcType=VARCHAR},
+      #{immsSRoom.responsibilityDpt,jdbcType=VARCHAR},
+      #{immsSRoom.responsibilityMan,jdbcType=VARCHAR},
+      #{immsSRoom.project,jdbcType=VARCHAR},
+      #{immsSRoom.devStatus,jdbcType=VARCHAR},
+      #{immsSRoom.outRoomTime,jdbcType=VARCHAR},
+      #{immsSRoom.outRoomUser,jdbcType=VARCHAR},
+      #{immsSRoom.remarks,jdbcType=VARCHAR},
+      #{immsSRoom.version,jdbcType=VARCHAR}
+      )
+    </foreach>
+  </insert>
+
+
+  <update id="update">
+    UPDATE imms_sroom
+    <set>
+      <if test="devType != null">
+        dev_type = #{devType},
+      </if>
+      <if test="devManu != null">
+        dev_manu = #{devManu},
+      </if>
+      <if test="devModel != null">
+        dev_model = #{devModel},
+      </if>
+      <if test="devNumber != null">
+        dev_number = #{devNumber},
+      </if>
+      <if test="inRoomTime != null">
+        in_room_time = #{inRoomTime},
+      </if>
+      <if test="useType != null">
+        use_type = #{useType},
+      </if>
+      <if test="receiver != null">
+        receiver = #{receiver},
+      </if>
+      <if test="devAddress != null">
+        dev_address = #{devAddress},
+      </if>
+      <if test="responsibilityDpt != null">
+        responsibility_dpt = #{responsibilityDpt},
+      </if>
+      <if test="responsibilityMan != null">
+        responsibility_man = #{responsibilityMan},
+      </if>
+      <if test="project != null">
+        project = #{project},
+      </if>
+      <if test="devStatus != null">
+        dev_status = #{devStatus},
+      </if>
+      <if test="outRoomTime != null">
+        out_room_time = #{outRoomTime},
+      </if>
+      <if test="outRoomUser != null">
+        out_room_user = #{outRoomUser},
+      </if>
+      <if test="devGo != null">
+        dev_go = #{devGo},
+      </if>
+      <if test="remarks != null">
+        remarks = #{remarks}
+      </if>
+    </set>
+    WHERE id = #{id}
+  </update>
+
+  <update id="updateBatchs" parameterType="com.example.imms.web.model.ImmsSRoom">
+    <foreach collection="list" separator=";" item="immsSRoom">
+      UPDATE imms_sroom
+      <set>
+        <if test="immsSRoom.devType != null">
+          dev_type = #{immsSRoom.devType},
+        </if>
+        <if test="immsSRoom.devManu != null">
+          dev_manu = #{immsSRoom.devManu},
+        </if>
+        <if test="immsSRoom.devModel != null">
+          dev_model = #{immsSRoom.devModel},
+        </if>
+        <if test="immsSRoom.devNumber != null">
+          dev_number = #{immsSRoom.devNumber},
+        </if>
+        <if test="immsSRoom.inRoomTime != null">
+          in_room_time = #{immsSRoom.inRoomTime},
+        </if>
+        <if test="immsSRoom.useType != null">
+          use_type = #{immsSRoom.useType},
+        </if>
+        <if test="immsSRoom.receiver != null">
+          receiver = #{immsSRoom.receiver},
+        </if>
+        <if test="immsSRoom.devAddress != null">
+          dev_address = #{immsSRoom.devAddress},
+        </if>
+        <if test="immsSRoom.responsibilityDpt != null">
+          responsibility_dpt = #{immsSRoom.responsibilityDpt},
+        </if>
+        <if test="immsSRoom.responsibilityMan != null">
+          responsibility_man = #{immsSRoom.responsibilityMan},
+        </if>
+        <if test="immsSRoom.project != null">
+          project = #{immsSRoom.project},
+        </if>
+        <if test="immsSRoom.devStatus != null">
+          dev_status = #{immsSRoom.devStatus},
+        </if>
+        <if test="immsSRoom.outRoomTime != null">
+          out_room_time = #{immsSRoom.outRoomTime},
+        </if>
+        <if test="immsSRoom.outRoomUser != null">
+          out_room_user = #{immsSRoom.outRoomUser},
+        </if>
+        <if test="immsSRoom.remarks != null">
+          remarks = #{immsSRoom.remarks},
+        </if>
+        <if test="immsSRoom.devGo != null">
+          dev_go = #{immsSRoom.devGo},
+        </if>
+        <if test="immsSRoom.version != null">
+          version = #{immsSRoom.version}
+        </if>
+
+      </set>
+      WHERE id = #{immsSRoom.id}
+    </foreach>
+  </update>
+
+
+  <delete  id="delete" parameterType="int" >
+    DELETE    FROM imms_sroom WHERE id = #{id}
+  </delete >
+
+  <delete id="deleteBath"  parameterType = "java.util.List">
+    delete from imms_sroom where 1>2
+    or id in
+    <foreach collection="ids"  item="id" open="(" separator="," close=")"  >
+      #{id}
+    </foreach>
+  </delete>
+
+
+</mapper>

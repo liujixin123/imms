@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.imms.web.dao.BaseSysdictionaryMapper">
+  <resultMap id="BaseResultMap" type="com.example.imms.web.model.BaseSysdictionary">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="codevalue" jdbcType="VARCHAR" property="codevalue" />
+    <result column="lable"  jdbcType="VARCHAR" property="lable" />
+    <result column="columntype"  jdbcType="VARCHAR" property="columntype" />
+    <result column="remark"  jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+  </resultMap>
+
+  <select id="selectByPrimaryKey" parameterType="int" resultMap="BaseResultMap">
+    SELECT * FROM base_sysdictionary WHERE id = #{id}
+  </select>
+
+
+  <select id="getDic" resultMap="BaseResultMap">
+    SELECT <include refid="baseColumn"/>
+    FROM base_sysdictionary
+    WHERE codevalue = #{codevalue}  and lable = #{lable} and columntype = #{columntype}
+    <if test="id != null and id != ''  ">
+      and id != #{id}
+    </if>
+  </select>
+
+  <select id="getBaseSysdictionary" resultMap="BaseResultMap">
+    SELECT <include refid="baseColumn"/>
+    FROM base_sysdictionary
+    WHERE codevalue = #{codevalue} and columntype = #{columntype}
+  </select>
+
+  <sql id="baseColumn">
+  id           ,
+  codevalue     ,
+  lable          ,
+  columntype   ,
+  remark         ,
+  status
+  </sql>
+
+
+  <select id="getDics" resultMap="BaseResultMap">
+    SELECT <include refid="baseColumn" />
+    FROM base_sysdictionary
+    <if test="type != null and type != ''  ">
+      where columntype = #{type}
+    </if>
+  </select>
+
+  <select id="getDicList" resultType="com.example.imms.web.model.BaseSysdictionary">
+    SELECT
+    id           ,
+    codevalue     ,
+    lable          ,
+    columntype   ,
+    remark         ,
+    status
+    FROM base_sysdictionary as u
+    <where>
+      <if test="columntype != null and columntype != '' ">
+        and columntype LIKE '%' #{columntype} '%'
+      </if>
+      <if test="codevalue != null and codevalue != '' ">
+        and codevalue  LIKE '%' #{codevalue} '%'
+      </if>
+
+      <if test="lable != null and lable != '' ">
+        and lable  LIKE '%' #{lable} '%'
+      </if>
+
+    </where>
+    order by columntype,codevalue
+  </select>
+
+  <delete  id="delete" parameterType="int" >
+    DELETE    FROM base_sysdictionary WHERE id = #{id}
+  </delete >
+
+
+  <insert id="insert" parameterType="com.example.imms.web.model.BaseSysdictionary" useGeneratedKeys="true" keyProperty="id">
+    insert into base_sysdictionary(
+    codevalue ,
+    lable ,
+    columntype ,
+    remark,
+    status )
+    values (
+    #{codevalue,jdbcType=VARCHAR},
+    #{lable,jdbcType=VARCHAR},
+    #{columntype,jdbcType=VARCHAR},
+    #{remark,jdbcType=VARCHAR},
+    '1'
+    )
+  </insert>
+
+  <update id="update">
+    UPDATE base_sysdictionary
+    <set>
+      <if test="codevalue != null">
+        codevalue = #{codevalue},
+      </if>
+      <if test="lable != null">
+        lable = #{lable},
+      </if>
+      <if test="columntype != null">
+        columntype = #{columntype},
+      </if>
+      <if test="remark != null">
+        remark = #{remark},
+      </if>
+
+    </set>
+    WHERE id = #{id}
+  </update>
+
+</mapper>
