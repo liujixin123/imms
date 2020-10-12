@@ -77,7 +77,7 @@
         dev_manu  as  devManu,
         dev_model  as  devModel,
         dev_number  as  devNumber,
-        system  as  system,
+        u.system,
         Safe_area  as  safeArea,
         maintain_level  as  maintainLevel,
         use_time  as  useTime,
