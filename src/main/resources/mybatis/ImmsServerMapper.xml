@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.imms.web.dao.ImmsServerMapper">
+    <resultMap id="BaseResultMap" type="com.example.imms.web.model.ImmsServer">
+
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="power_rate" jdbcType="VARCHAR" property="powerRate" />
+        <result column="power_num"  jdbcType="VARCHAR" property="powerNum" />
+        <result column="system_type" jdbcType="VARCHAR" property="systemType" />
+        <result column="system_version"  jdbcType="VARCHAR" property="systemVersion" />
+        <result column="cpu_num" jdbcType="VARCHAR" property="cpuNum" />
+        <result column="room_id"  jdbcType="VARCHAR" property="roomId" />
+        <result column="cpu_xh"  jdbcType="VARCHAR" property="cpuXh" />
+        <result column="cpu_zp"  jdbcType="VARCHAR" property="cpuZp" />
+        <result column="cpu_hs"  jdbcType="VARCHAR" property="cpuHs" />
+        <result column="rom_num"  jdbcType="VARCHAR" property="romNum" />
+        <result column="rom_size"  jdbcType="VARCHAR" property="romSize" />
+        <result column="disk_type"  jdbcType="VARCHAR" property="diskType" />
+        <result column="disk_num"  jdbcType="VARCHAR" property="diskNum" />
+        <result column="disk_size"  jdbcType="VARCHAR" property="diskSize" />
+        <result column="hba_num"  jdbcType="VARCHAR" property="hbaNum" />
+        <result column="netcard_num"  jdbcType="VARCHAR" property="netcardNum" />
+        <result column="raid_detail"  jdbcType="VARCHAR" property="raidDetail" />
+        <result column="external_rom"  jdbcType="VARCHAR" property="externalRom" />
+        <result column="double_version"  jdbcType="VARCHAR" property="doubleVersion" />
+        <result column="gks"  jdbcType="VARCHAR" property="gks" />
+        <result column="server_pwd"  jdbcType="VARCHAR" property="serverPwd" />
+        <result column="create_time"  jdbcType="VARCHAR" property="createTime" />
+        <result column="remarks"  jdbcType="VARCHAR" property="remarks" />
+    </resultMap>
+
+    <select id="queryById" parameterType="int" resultMap="BaseResultMap">
+        SELECT * FROM imms_server WHERE id = #{id}
+    </select>
+    <select id="selectByPrimaryKey" parameterType="int" resultMap="BaseResultMap">
+        SELECT * FROM imms_server WHERE id = #{id}
+    </select>
+
+    <sql id="baseColumn">
+        id,
+        power_rate ,
+        power_num,
+        system_type ,
+        system_version  ,
+        cpu_num,
+        room_id,
+        cpu_xh ,
+        cpu_zp ,
+        cpu_hs ,
+        rom_num ,
+        rom_size ,
+        disk_type ,
+        disk_num ,
+        disk_size ,
+        hba_num ,
+        netcard_num ,
+        raid_detail ,
+        external_rom ,
+        double_version ,
+        gks ,
+        server_pwd ,
+        remarks ,
+        create_time
+    </sql>
+
+    <select id="getImmsServerList" resultType="com.example.imms.web.model.ImmsServer">
+        SELECT s.id,
+        s.power_rate as powerRate,
+        s.power_num as powerNum,
+        s.system_type as systemType ,
+        s.system_version  as systemVersion ,
+        s.cpu_num as cpuNum,
+        s.room_id as roomId,
+        s.cpu_xh  as cpuXh,
+        s.cpu_zp as cpuZp ,
+        s.cpu_hs  as cpuHs,
+        s.rom_num  as romNum,
+        s.rom_size  as romSize,
+        s.disk_type as diskType ,
+        s.disk_num as diskNum ,
+        s.disk_size  as diskSize,
+        s.hba_num  as hbaNum,
+        s.netcard_num  as netcardNum,
+        s.raid_detail as raidDetail ,
+        s.external_rom  as externalRom,
+        s.double_version as doubleVersion ,
+        s.gks ,
+        s.server_pwd  as serverPwd,
+        s.remarks ,
+        s.create_time as createTime,
+        r.room_name as roomName
+        FROM imms_server s join sdtz_tb_engine_room r on s.room_id=r.id
+        <where>
+            <if test="id != null and id != '' and id != -1">
+                and s.id =#{id}
+            </if>
+            <if test="systemType != null and systemType != '' ">
+                and s.system_type LIKE '%' #{systemType} '%'
+            </if>
+            <if test="systemVersion != null and systemVersion != '' ">
+                and s.system_version LIKE '%' #{systemVersion} '%'
+            </if>
+            <if test="roomId != null and roomId != '' ">
+                and s.room_id =  #{roomId}
+            </if>
+        </where>
+        order by s.create_time
+    </select>
+
+    <insert id="insert" parameterType="com.example.imms.web.model.ImmsServer" useGeneratedKeys="true" keyProperty="id">
+        insert into imms_server (power_rate ,power_num,system_type ,system_version  , cpu_num,room_id,cpu_xh ,cpu_zp , cpu_hs ,rom_num ,
+        rom_size ,disk_type ,disk_num ,disk_size ,hba_num ,netcard_num ,raid_detail ,external_rom ,double_version ,gks ,server_pwd ,remarks ,create_time)
+        values (#{powerRate,jdbcType=VARCHAR}, #{powerNum,jdbcType=VARCHAR}, #{systemType,jdbcType=VARCHAR},
+        #{systemVersion,jdbcType=VARCHAR}, #{cpuNum,jdbcType=VARCHAR}, #{roomId,jdbcType=VARCHAR},
+        #{cpuXh,jdbcType=VARCHAR}, #{cpuZp,jdbcType=VARCHAR},
+        #{cpuHs,jdbcType=VARCHAR}, #{romNum,jdbcType=VARCHAR}, #{romSize,jdbcType=VARCHAR},
+        #{diskType,jdbcType=VARCHAR}, #{diskNum,jdbcType=VARCHAR}, #{diskSize,jdbcType=VARCHAR},
+        #{hbaNum,jdbcType=VARCHAR}, #{netcardNum,jdbcType=VARCHAR}, #{raidDetail,jdbcType=VARCHAR},
+        #{externalRom,jdbcType=VARCHAR}, #{doubleVersion,jdbcType=VARCHAR}, #{gks,jdbcType=VARCHAR},
+        #{serverPwd,jdbcType=VARCHAR}, #{remarks,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="insertBatchs" parameterType="com.example.imms.web.model.ImmsServer" useGeneratedKeys="true" keyProperty="id">
+        insert into imms_server (power_rate ,power_num,system_type ,system_version  , cpu_num,room_id,cpu_xh ,cpu_zp , cpu_hs ,rom_num ,
+        rom_size ,disk_type ,disk_num ,disk_size ,hba_num ,netcard_num ,raid_detail ,external_rom ,double_version ,gks ,server_pwd ,remarks ,create_time)
+        values
+        <foreach collection="list" item="immsServer" separator=",">
+            (#{immsServer.powerRate,jdbcType=VARCHAR}, #{immsServer.powerNum,jdbcType=VARCHAR}, #{immsServer.systemType,jdbcType=VARCHAR},
+            #{immsServer.systemVersion,jdbcType=VARCHAR}, #{immsServer.cpuNum,jdbcType=VARCHAR}, #{immsServer.roomId,jdbcType=VARCHAR},
+            #{immsServer.cpuXh,jdbcType=VARCHAR}, #{immsServer.cpuZp,jdbcType=VARCHAR},
+            #{immsServer.cpuHs,jdbcType=VARCHAR}, #{immsServer.romNum,jdbcType=VARCHAR}, #{immsServer.romSize,jdbcType=VARCHAR},
+            #{immsServer.diskType,jdbcType=VARCHAR}, #{immsServer.diskNum,jdbcType=VARCHAR}, #{immsServer.diskSize,jdbcType=VARCHAR},
+            #{immsServer.hbaNum,jdbcType=VARCHAR}, #{immsServer.netcardNum,jdbcType=VARCHAR}, #{immsServer.raidDetail,jdbcType=VARCHAR},
+            #{immsServer.externalRom,jdbcType=VARCHAR}, #{immsServer.doubleVersion,jdbcType=VARCHAR}, #{immsServer.gks,jdbcType=VARCHAR},
+            #{immsServer.serverPwd,jdbcType=VARCHAR}, #{immsServer.remarks,jdbcType=VARCHAR}, #{immsServer.createTime,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+
+    <update id="update" parameterType="map">
+        update imms_server
+        <set>
+            <if test="id != null">
+                id = #{id,jdbcType=INTEGER},
+            </if>
+            <if test="powerRate != null">
+                power_rate = #{powerRate,jdbcType=VARCHAR},
+            </if>
+            <if test="powerNum != null">
+                power_num = #{powerNum,jdbcType=VARCHAR},
+            </if>
+            <if test="systemType != null">
+                system_type = #{systemType,jdbcType=VARCHAR},
+            </if>
+            <if test="systemVersion != null">
+                system_version = #{systemVersion,jdbcType=VARCHAR},
+            </if>
+            <if test="cpuNum != null">
+                cpu_num = #{cpuNum,jdbcType=VARCHAR},
+            </if>
+            <if test="roomId != null">
+                room_id = #{roomId,jdbcType=VARCHAR},
+            </if>
+            <if test="cpuXh != null">
+                cpu_xh = #{cpuXh,jdbcType=VARCHAR},
+            </if>
+            <if test="cpuZp != null">
+                cpu_zp = #{cpuZp,jdbcType=VARCHAR},
+            </if>
+            <if test="cpuHs != null">
+                cpu_hs = #{cpuHs,jdbcType=VARCHAR},
+            </if>
+            <if test="romNum != null">
+                rom_num = #{romNum,jdbcType=VARCHAR},
+            </if>
+            <if test="romSize != null">
+                rom_size = #{romSize,jdbcType=VARCHAR},
+            </if>
+            <if test="diskType != null">
+                disk_type = #{diskType,jdbcType=VARCHAR},
+            </if>
+            <if test="diskNum != null">
+                disk_num = #{diskNum,jdbcType=VARCHAR},
+            </if>
+            <if test="diskSize != null">
+                disk_size = #{diskSize,jdbcType=VARCHAR},
+            </if>
+            <if test="hbaNum != null">
+                hba_num = #{hbaNum,jdbcType=VARCHAR},
+            </if>
+            <if test="netcardNum != null">
+                netcard_num = #{netcardNum,jdbcType=VARCHAR},
+            </if>
+            <if test="raidDetail != null">
+                raid_detail = #{raidDetail,jdbcType=VARCHAR},
+            </if>
+            <if test="externalRom != null">
+                external_rom = #{externalRom,jdbcType=VARCHAR},
+            </if>
+            <if test="doubleVersion != null">
+                double_version = #{doubleVersion,jdbcType=VARCHAR},
+            </if>
+            <if test="gks != null">
+                gks = #{gks,jdbcType=VARCHAR},
+            </if>
+            <if test="serverPwd != null">
+                server_pwd = #{serverPwd,jdbcType=VARCHAR},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateBatchs" parameterType="com.example.imms.web.model.ImmsServer">
+        <foreach collection="list" separator=";" item="immsServer">
+            update imms_server
+            <set>
+                <if test="immsServer.powerRate != null">
+                    power_rate = #{immsServer.powerRate,jdbcType=VARCHAR},
+                </if>
+                <if test="immsServer.powerNum != null">
+                    power_num = #{immsServer.powerNum,jdbcType=VARCHAR},
+                </if>
+                <if test="immsServer.systemType != null">
+                    system_type = #{immsServer.systemType,jdbcType=VARCHAR},
+                </if>
+                <if test="immsServer.systemVersion != null">
+                    system_version = #{immsServer.systemVersion,jdbcType=VARCHAR},
+                </if>
+                <if test="immsServer.cpuNum != null">
+                    cpu_num = #{immsServer.cpuNum,jdbcType=VARCHAR},
+                </if>
+                <if test="immsServer.roomId != null">
+                    room_id = #{immsServer.roomId,jdbcType=VARCHAR},
+                </if>
+                <if test="immsServer.cpuXh != null">
+                    cpu_xh = #{immsServer.cpuXh,jdbcType=VARCHAR},
+                </if>
+                <if test="immsServer.cpuZp != null">
+                    cpu_zp = #{immsServer.cpuZp,jdbcType=VARCHAR},
+                </if>
+                <if test="immsServer.cpuHs != null">
+                    cpu_hs = #{immsServer.cpuHs,jdbcType=VARCHAR},
+                </if>
+                <if test="immsServer.romNum != null">
+                    rom_num = #{immsServer.romNum,jdbcType=VARCHAR},
+                </if>
+                <if test="immsServer.romSize != null">
+                    rom_size = #{immsServer.romSize,jdbcType=VARCHAR},
+                </if>
+                <if test="immsServer.diskType != null">
+                    disk_type = #{immsServer.diskType,jdbcType=VARCHAR},
+                </if>
+                <if test="immsServer.diskNum != null">
+                    disk_num = #{immsServer.diskNum,jdbcType=VARCHAR},
+                </if>
+                <if test="immsServer.diskSize != null">
+                    disk_size = #{immsServer.diskSize,jdbcType=VARCHAR},
+                </if>
+                <if test="immsServer.hbaNum != null">
+                    hba_num = #{immsServer.hbaNum,jdbcType=VARCHAR},
+                </if>
+                <if test="immsServer.netcardNum != null">
+                    netcard_num = #{immsServer.netcardNum,jdbcType=VARCHAR},
+                </if>
+                <if test="immsServer.raidDetail != null">
+                    raid_detail = #{immsServer.raidDetail,jdbcType=VARCHAR},
+                </if>
+                <if test="immsServer.externalRom != null">
+                    external_rom = #{immsServer.externalRom,jdbcType=VARCHAR},
+                </if>
+                <if test="immsServer.doubleVersion != null">
+                    double_version = #{immsServer.doubleVersion,jdbcType=VARCHAR},
+                </if>
+                <if test="immsServer.gks != null">
+                    gks = #{immsServer.gks,jdbcType=VARCHAR},
+                </if>
+                <if test="immsServer.serverPwd != null">
+                    server_pwd = #{immsServer.serverPwd,jdbcType=VARCHAR},
+                </if>
+            </set>
+            WHERE id = #{immsServer.id}
+        </foreach>
+    </update>
+    <delete  id="delete" parameterType="int" >
+        DELETE FROM imms_server WHERE id = #{id}
+    </delete >
+
+    <delete id="deleteBath"  parameterType = "java.util.List">
+        delete from imms_server where 1>2
+        or id in
+        <foreach collection="ids"  item="id" open="(" separator="," close=")"  >
+            #{id}
+        </foreach>
+    </delete>
+    <select id="getImmsRoomMapper" resultType="com.example.imms.web.model.ImmsServer">
+        SELECT
+        id  as  roomId,
+        room_name  as  roomName
+        FROM sdtz_tb_engine_room
+        <where>
+            <if test="roomName != null and roomName != '' ">
+                and room_name = #{roomName}
+            </if>
+        </where>
+    </select>
+</mapper>
